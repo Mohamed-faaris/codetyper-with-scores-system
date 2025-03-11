@@ -58,6 +58,8 @@ const GistPage: NextPage = () => {
   >([]);
   const router = useRouter();
   const id = router.query.id;
+  const roll = router.query.roll;
+
   const [isTyping, setIsTyping] = useState(false);
   const username = router.query.username;
   const setNextRandomGist = (gists: Gist[]) => {
@@ -115,6 +117,8 @@ const GistPage: NextPage = () => {
       flushSync(() => {
         setIsTyping(false);
       });
+      
+      console.log(`Gist ${currentGistFile.filename} - ${roll} completed with result: ${result.accuracy}% accuracy, ${result.wpm} WPM`);
       nextGistButtonRef.current?.focus();
       nextFileButtonRef.current?.focus();
     },
