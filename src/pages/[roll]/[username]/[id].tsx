@@ -118,7 +118,7 @@ const GistPage: NextPage = () => {
           try {
             const response = await axiosInstance.post("api/wpm/add/", {
               roll,
-              n: currentGistFile.filename[0],
+              n: parseInt(currentGistFile.filename[0])+1,
               wpm: result.netWPM,
             });
             console.log(response.data);
