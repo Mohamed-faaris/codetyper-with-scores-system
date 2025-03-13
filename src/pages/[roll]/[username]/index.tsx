@@ -18,11 +18,23 @@ import { Gist } from "../../../hooks/useGistQuery";
 import { useGistsQuery } from "../../../hooks/useGistsQuery";
 import { generateGistPath } from "../../../utils/generateGistPath";
 import { getRandomGist } from "../../../utils/getRandomGist";
+import { GetServerSideProps, NextPage } from "next";
 
-const UserPage = () => {
+// Add interface for props
+interface UsernamePageProps {
+  serverSideRoll: string;
+  serverSideUsername: string;
+}
+
+// Update your component definition to use these props
+const UsernamePage: NextPage<UsernamePageProps> = ({
+  serverSideRoll,
+  serverSideUsername,
+}) => {
   const [randomGist, setRandomGist] = useState<Gist | null>(null);
   const router = useRouter();
-  const username = router.query.username;
+  const roll = serverSideRoll || (router.query.roll as string);
+  const username = serverSideUsername || (router.query.username as string);
 
   const setNextRandomGist = (gists: Gist[]) => {
     setRandomGist(getRandomGist(gists));
@@ -94,4 +106,21 @@ const UserPage = () => {
   );
 };
 
-export default UserPage;
+export default UsernamePage;
+
+// Add getServerSideProps to enable server-side rendering
+export const getServerSideProps: GetServerSideProps<UsernamePageProps> = async (
+  context
+) => {
+  const { roll, username } = context.params as {
+    roll: string;
+    username: string;
+  };
+
+  return {
+    props: {
+      serverSideRoll: roll,
+      serverSideUsername: username,
+    },
+  };
+};

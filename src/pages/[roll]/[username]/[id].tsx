@@ -16,7 +16,7 @@ import {
   ResetIcon,
   ShuffleIcon,
 } from "@radix-ui/react-icons";
-import { NextPage } from "next";
+import { NextPage, GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -38,6 +38,13 @@ import { generateNextFileLink } from "../../../utils/generateNextFileLink";
 import { getRandomGist } from "../../../utils/getRandomGist";
 import { axiosInstance } from "../../../hooks/axios";
 
+// Add interface for props
+interface GistPageProps {
+  serverSideRoll: string;
+  serverSideUsername: string;
+  serverSideId: string;
+}
+
 export type GistFileWithResult = GistFile & {
   typingTest:
     | {
@@ -50,7 +57,7 @@ export type GistFileWithResult = GistFile & {
       };
 };
 
-const GistPage: NextPage = ({
+const GistPage: NextPage<GistPageProps> = ({
   serverSideRoll,
   serverSideUsername,
   serverSideId,
@@ -276,6 +283,18 @@ const GistPage: NextPage = ({
                 Restart File
               </Button>
             )}
+
+            {/* Add Score Board Button */}
+            <Button
+              component="a"
+              href={`https://speed-typing-server.vercel.app/${roll}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outline"
+              color="blue"
+            >
+              Score Board
+            </Button>
           </Group>
         </Group>
       </Container>
@@ -291,17 +310,19 @@ const GistPage: NextPage = ({
 
 export default GistPage;
 
-// Add this function at the end of the file to enable server-side rendering
-export const getServerSideProps = async (context) => {
-  const { roll, username, id } = context.params;
-
-  // You can perform server-side data fetching here
-  // For example, initial data loading for the gist
+// Update the getServerSideProps type
+export const getServerSideProps: GetServerSideProps<GistPageProps> = async (
+  context
+) => {
+  const { roll, username, id } = context.params as {
+    roll: string;
+    username: string;
+    id: string;
+  };
 
   // Return the props that will be passed to the page component
   return {
     props: {
-      // You can pass pre-fetched data here
       serverSideRoll: roll,
       serverSideUsername: username,
       serverSideId: id,
