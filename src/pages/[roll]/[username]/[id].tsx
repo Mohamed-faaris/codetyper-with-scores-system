@@ -125,15 +125,43 @@ const GistPage: NextPage<GistPageProps> = ({
           textState,
         };
         console.log(roll, result.netWPM, currentGistFile.filename[0]);
+
+        // Ensure filename exists and has at least one character
+        const fileNumber =
+          currentGistFile.filename && currentGistFile.filename.length > 0
+            ? currentGistFile.filename[0]
+            : 0;
+
+        // Store in localStorage
+        try {
+          // Get existing scores or initialize empty object
+          const storedScores = JSON.parse(
+            localStorage.getItem("typingScores") || "{}"
+          );
+
+          // Create key for this specific file
+          const scoreKey = `${roll}_${fileNumber}`;
+
+          // Only update if new score is higher or no previous score exists
+          if (
+            !storedScores[scoreKey] ||
+            result.netWPM > storedScores[scoreKey].Maxwpm
+          ) {
+            storedScores[scoreKey] = {
+              roll,
+              n: fileNumber,
+              Maxwpm: result.netWPM,
+            };
+            localStorage.setItem("typingScores", JSON.stringify(storedScores));
+            console.log("New high score saved to localStorage!");
+          }
+        } catch (error) {
+          console.error("Failed to save score to localStorage:", error);
+        }
+
         const retryPost = async (retries = 3) => {
           try {
-            // Ensure filename exists and has at least one character
-            const fileNumber =
-              currentGistFile.filename && currentGistFile.filename.length > 0
-                ? currentGistFile.filename[0]
-                : 0;
-
-            const response = await axiosInstance.post("api/wpm/add/", {
+            const response = await axiosInstance.post("/api/wpm/add/", {
               roll,
               n: fileNumber,
               wpm: result.netWPM,
@@ -287,7 +315,7 @@ const GistPage: NextPage<GistPageProps> = ({
             {/* Add Score Board Button */}
             <Button
               component="a"
-              href={`https://speed-typing-server.vercel.app/${roll}`}
+              href={`${process.env.NEXT_PUBLIC_API_URL}/scorecard/${roll}`}
               target="_blank"
               rel="noopener noreferrer"
               variant="outline"
