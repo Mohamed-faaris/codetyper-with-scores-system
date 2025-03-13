@@ -174,7 +174,7 @@ const GistPage: NextPage = () => {
             >
               <Text>{gistQuery.data.description || gistQuery.data.id}</Text>
             </Title>
-            <Anchor
+            {/* <Anchor
               href={`https://gist.github.com${router.asPath.replace(
                 GIST_BASE_PATH,
                 ""
@@ -183,7 +183,7 @@ const GistPage: NextPage = () => {
               title="View on GitHub"
             >
               <GitHubLogoIcon />
-            </Anchor>
+            </Anchor> */}
           </Group>
         )}
         {gistFilesWithResult && (
@@ -204,11 +204,11 @@ const GistPage: NextPage = () => {
         />
 
         <Group position="apart">
-          <Link href={`${GIST_BASE_PATH}/${username}`} passHref>
+          {/* <Link href={`${GIST_BASE_PATH}/${username}`} passHref>
             <Anchor>
               <ArrowLeftIcon /> {username}&apos;s gists
             </Anchor>
-          </Link>
+          </Link> */}
           <Group>
             {gistFilesWithResult.length > 1 &&
               !isTyping &&
@@ -225,7 +225,7 @@ const GistPage: NextPage = () => {
                   Next File
                 </Button>
               )}
-            {!isTyping && randomGist && typeof username === "string" && (
+            {/* {!isTyping && randomGist && typeof username === "string" && (
               <Button
                 component={NextLink}
                 href={generateGistPath(randomGist, username)}
@@ -235,7 +235,7 @@ const GistPage: NextPage = () => {
               >
                 Next Random Gist
               </Button>
-            )}
+            )} */}
             {currentGistFile.typingTest.isDone && (
               <Button
                 onClick={restart}
