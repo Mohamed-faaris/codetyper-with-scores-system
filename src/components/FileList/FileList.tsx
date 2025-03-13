@@ -1,7 +1,7 @@
 import { Button, Group, List, Text } from "@mantine/core";
 import { EyeOpenIcon, PlayIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { GistFileWithResult } from "../../pages/gist/[username]/[id]";
+import { GistFileWithResult } from "../../pages/[roll]/[username]/[id]";
 import { generateFilenameSlug } from "../../utils/generateFilenameSlug";
 import { FileIcon } from "./FileIcons";
 import { TestResult } from "./TestResult";

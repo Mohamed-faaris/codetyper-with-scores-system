@@ -50,7 +50,11 @@ export type GistFileWithResult = GistFile & {
       };
 };
 
-const GistPage: NextPage = () => {
+const GistPage: NextPage = ({
+  serverSideRoll,
+  serverSideUsername,
+  serverSideId,
+}) => {
   const [randomGist, setRandomGist] = useState<Gist | null>(null);
   const nextFileButtonRef = useRef<HTMLAnchorElement>(null);
   const nextGistButtonRef = useRef<HTMLAnchorElement>(null);
@@ -58,11 +62,11 @@ const GistPage: NextPage = () => {
     GistFileWithResult[]
   >([]);
   const router = useRouter();
-  const id = router.query.id;
-  const roll = router.query.roll;
+  const id = serverSideId || router.query.id;
+  const roll = serverSideRoll || router.query.roll;
 
   const [isTyping, setIsTyping] = useState(false);
-  const username = router.query.username;
+  const username = serverSideUsername || router.query.username;
   const setNextRandomGist = (gists: Gist[]) => {
     setRandomGist(getRandomGist(gists));
   };
@@ -116,9 +120,15 @@ const GistPage: NextPage = () => {
         console.log(roll, result.netWPM, currentGistFile.filename[0]);
         const retryPost = async (retries = 3) => {
           try {
+            // Ensure filename exists and has at least one character
+            const fileNumber =
+              currentGistFile.filename && currentGistFile.filename.length > 0
+                ? currentGistFile.filename[0]
+                : 0;
+
             const response = await axiosInstance.post("api/wpm/add/", {
               roll,
-              n: parseInt(currentGistFile.filename[0])+1,
+              n: fileNumber,
               wpm: result.netWPM,
             });
             console.log(response.data);
@@ -280,3 +290,21 @@ const GistPage: NextPage = () => {
 };
 
 export default GistPage;
+
+// Add this function at the end of the file to enable server-side rendering
+export const getServerSideProps = async (context) => {
+  const { roll, username, id } = context.params;
+
+  // You can perform server-side data fetching here
+  // For example, initial data loading for the gist
+
+  // Return the props that will be passed to the page component
+  return {
+    props: {
+      // You can pass pre-fetched data here
+      serverSideRoll: roll,
+      serverSideUsername: username,
+      serverSideId: id,
+    },
+  };
+};

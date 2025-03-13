@@ -1,5 +1,5 @@
 import { GistFile } from "../hooks/useGistQuery";
-import { GistFileWithResult } from "../pages/gist/[username]/[id]";
+import { GistFileWithResult } from "../pages/[roll]/[username]/[id]";
 import { generateFilenameSlug } from "./generateFilenameSlug";
 
 export function generateNextFileLink(
