@@ -33,18 +33,16 @@ export function Layout({ children }: LayoutProps) {
         styles={styles}
         header={
           <Header height="100px" p="md">
-            <Link href="/" passHref>
-              <Anchor>
-                <Title>Code Typer</Title>
-              </Anchor>
-            </Link>
+            <Anchor>
+              <Title>Hex Tech</Title>
+            </Anchor>
           </Header>
         }
         footer={
           <Footer height="auto" p="md">
             <Center>
               <Box>
-                This is an{" "}
+                powered by <Anchor>Encrypt Huereka </Anchor>,This is an{" "}
                 <Anchor href="https://github.com/MauricioRobayo/codetyper">
                   open source
                 </Anchor>{" "}
