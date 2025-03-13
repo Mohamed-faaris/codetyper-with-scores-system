@@ -36,6 +36,7 @@ import { generateFilenameSlug } from "../../../utils/generateFilenameSlug";
 import { generateGistPath } from "../../../utils/generateGistPath";
 import { generateNextFileLink } from "../../../utils/generateNextFileLink";
 import { getRandomGist } from "../../../utils/getRandomGist";
+import { axiosInstance } from "../../../hooks/axios";
 
 export type GistFileWithResult = GistFile & {
   typingTest:
@@ -112,19 +113,39 @@ const GistPage: NextPage = () => {
           result,
           textState,
         };
+        console.log(roll, result.netWPM, currentGistFile.filename[0]);
+        const retryPost = async (retries = 3) => {
+          try {
+            const response = await axiosInstance.post("api/wpm/add/", {
+              roll,
+              n: currentGistFile.filename[0],
+              wpm: result.netWPM,
+            });
+            console.log(response.data);
+          } catch (error) {
+            if (retries > 0) {
+              console.log(`Retrying... (${retries} attempts left)`);
+              await retryPost(retries - 1);
+            } else {
+              console.error("Failed after 3 attempts:", error);
+            }
+          }
+        };
+
+        retryPost();
+
         setGistFilesWithResults([...gistFilesWithResult]);
       }
       flushSync(() => {
         setIsTyping(false);
       });
-      
-      console.log(`Gist ${currentGistFile.filename} - ${roll} completed with result: ${result.accuracy}% accuracy, ${result.wpm} WPM`);
+
       nextGistButtonRef.current?.focus();
       nextFileButtonRef.current?.focus();
     },
     [currentGistFile, gistFilesWithResult]
   );
-  
+
   const onStart = useCallback(() => {
     setIsTyping(true);
   }, []);
